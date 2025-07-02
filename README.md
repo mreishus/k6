@@ -73,8 +73,8 @@ k6 run wp.js --env BYPASS_CACHE=1
 ## Reset WooCommerce
 
 ```
-wp post delete --force $(wp post list --post_type=shop_order --format=ids --posts_per_page=-1)
-wp user delete --yes $(wp user list --role=customer --format=ids --posts_per_page=-1)
+wp post delete --force $(wp post list --post_type=shop_order --field=ID --posts_per_page=-1)
+wp user delete --yes $(wp user list --role=customer --field=ID --posts_per_page=-1)
 wp cache flush
 ```
 

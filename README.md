@@ -70,7 +70,19 @@ To attempt bypassing page caches without logging in, pass in `BYPASS_CACHE`:
 k6 run wp.js --env BYPASS_CACHE=1
 ```
 
-## Reset WooCommerce
+## Reset WooCommerce (when HPOS is enabled)
+
+```
+wp db query "TRUNCATE TABLE wp_wc_orders"
+wp db query "TRUNCATE TABLE wp_wc_orders_meta"
+wp db query "TRUNCATE TABLE wp_wc_order_addresses"
+wp db query "TRUNCATE TABLE wp_wc_order_operational_data"
+wp user delete --yes $(wp user list --role=customer --field=ID --posts_per_page=-1)
+wp cache flush
+```
+
+
+## Reset WooCommerce (when HPOS is disabled)
 
 ```
 wp post delete --force $(wp post list --post_type=shop_order --field=ID --posts_per_page=-1)

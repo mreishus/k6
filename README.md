@@ -2,6 +2,12 @@
 
 We use these scripts to benchmark Object Cache Pro and Relay with various hosting partners.
 
+## FORK README
+
+**July 2025**
+Added `woo-checkout-block.js` for testing WooCommerce stores using block themes and the Store API. This script maintains the same test flow as `woo-checkout.js` but uses modern WooCommerce APIs and selectors.
+Small updates to the "Reset WooCommerce" commands.
+
 ## Setup
 
 Make sure [k6 is installed](https://k6.io/docs/getting-started/installation/).
@@ -24,6 +30,27 @@ k6 run wp.js --vus=100 --duration=10m --env SITE_URL=https://example.com
 ### `woo-checkout.js`
 
 Loads the homepage, selects and loads a random category, selects a random product and adds it to the cart, loads the cart page and then places an order.
+
+```
+wp option update woocommerce_enable_guest_checkout no --autoload=no
+wp option update woocommerce_enable_signup_and_login_from_checkout yes --autoload=no
+
+k6 run woo-checkout.js --env SITE_URL=https://example.com
+```
+
+Be sure to [reset WooCommerce](#reset-woocommerce) between test runs.
+
+### `woo-checkout-block.js`
+
+Loads the homepage, selects and loads a random category, selects a random product and adds it to the cart, loads the cart page and then places an order.
+
+This is the same as woo-checkout-block, but updated for block themes.
+- Updated product selector to support both classic (`.products`) and block-based product grids (`ul.wc-block-product-template__responsive`)
+- Uses the WooCommerce Store API (`/wp-json/wc/store/`) for cart and checkout operations instead of form submissions
+  - I was having trouble getting the methods used in woo-checkout.js to work, I suspect because we now need JS/XHR hydration.
+- Requires Cash on Delivery payment method to be enabled in WooCommerce settings.
+
+If there are nil URL errors on your site early in the process, try adding a `[product_categories]` shortcode on your homepage.
 
 ```
 wp option update woocommerce_enable_guest_checkout no --autoload=no
